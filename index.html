@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MiniMucit | 3D Baskı Oyuncaklar</title>
+  <title>KatmanLab | 3D Baskı Oyuncaklar</title>
 
   <style>
     body {
@@ -25,16 +25,14 @@
       margin: 0;
     }
 
-    header p {
-      font-size: 20px;
-      margin-top: 10px;
-    }
-
     nav {
       background: white;
       padding: 15px;
       text-align: center;
       box-shadow: 0 2px 10px #ddd;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     nav a {
@@ -62,17 +60,15 @@
       gap: 25px;
     }
 
-    .card {
+    .card, .cart, .about {
       background: white;
       border-radius: 18px;
       padding: 20px;
-      text-align: center;
       box-shadow: 0 4px 15px #ddd;
-      transition: 0.3s;
     }
 
-    .card:hover {
-      transform: translateY(-8px);
+    .card {
+      text-align: center;
     }
 
     .card img {
@@ -103,12 +99,24 @@
       background: #3730a3;
     }
 
-    .about {
-      background: white;
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow: 0 4px 15px #ddd;
-      text-align: center;
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .total {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 20px;
+    }
+
+    .buy-btn {
+      background: #16a34a;
+      width: 100%;
+      margin-top: 15px;
       font-size: 18px;
     }
 
@@ -125,12 +133,13 @@
 <body>
 
   <header>
-    <h1>MiniMucit</h1>
+    <h1>KatmanLab</h1>
     <p>3D Baskı Dekoratif ve İnteraktif Oyuncaklar</p>
   </header>
 
   <nav>
     <a href="#urunler">Ürünler</a>
+    <a href="#sepet">Sepet</a>
     <a href="#hakkimizda">Hakkımızda</a>
     <a href="#iletisim">İletişim</a>
   </nav>
@@ -141,29 +150,43 @@
     <div class="products">
 
       <div class="card">
-        <img src="https://via.placeholder.com/300x200" alt="3D Ejderha">
+        <img src="https://via.placeholder.com/300x200" alt="Hareketli Ejderha">
         <h3>Hareketli 3D Ejderha</h3>
         <p>Esnek, dekoratif ve eğlenceli oyuncak.</p>
         <p class="price">149 TL</p>
-        <button>Sepete Ekle</button>
+        <button onclick="addToCart('Hareketli 3D Ejderha', 149)">Sepete Ekle</button>
       </div>
 
       <div class="card">
-        <img src="https://via.placeholder.com/300x200" alt="Robot Figür">
+        <img src="https://via.placeholder.com/300x200" alt="Mini Robot Figür">
         <h3>Mini Robot Figür</h3>
         <p>Masa dekoru ve oyuncak olarak kullanılabilir.</p>
         <p class="price">99 TL</p>
-        <button>Sepete Ekle</button>
+        <button onclick="addToCart('Mini Robot Figür', 99)">Sepete Ekle</button>
       </div>
 
       <div class="card">
-        <img src="https://via.placeholder.com/300x200" alt="Puzzle Oyuncak">
+        <img src="https://via.placeholder.com/300x200" alt="3D Puzzle Oyuncak">
         <h3>3D Puzzle Oyuncak</h3>
         <p>Zeka geliştirici interaktif tasarım.</p>
         <p class="price">129 TL</p>
-        <button>Sepete Ekle</button>
+        <button onclick="addToCart('3D Puzzle Oyuncak', 129)">Sepete Ekle</button>
       </div>
 
+    </div>
+  </section>
+
+  <section class="section" id="sepet">
+    <h2>Sepetim</h2>
+
+    <div class="cart">
+      <div id="cartItems">
+        <p>Sepetiniz boş.</p>
+      </div>
+
+      <div class="total" id="totalPrice">Toplam: 0 TL</div>
+
+      <button class="buy-btn" onclick="buyNow()">WhatsApp ile Satın Al</button>
     </div>
   </section>
 
@@ -171,8 +194,7 @@
     <h2>Hakkımızda</h2>
     <div class="about">
       <p>
-        KatmanLab, 3D yazıcı ile üretilen dekoratif, eğlenceli ve interaktif oyuncaklar sunan genç ve yaratıcı bir mağazadır.
-        Amacımız sıradan oyuncaklar yerine kişiye özel, farklı ve dikkat çekici ürünler üretmektir.
+        KatmanLab, 3D yazıcı ile üretilen dekoratif, eğlenceli ve interaktif oyuncaklar sunan yaratıcı bir mağazadır.
       </p>
     </div>
   </section>
@@ -180,14 +202,78 @@
   <section class="section" id="iletisim">
     <h2>İletişim</h2>
     <div class="about">
-      <p>Instagram: @efe_4843</p>
-      <p>E-posta: efeo85811@gmail.com</p>
+      <p>WhatsApp: +90 541 234 59 88</p>
+      <p>Instagram: @katmanlab</p>
     </div>
   </section>
 
   <footer>
     <p>© 2026 KatmanLab - Tüm hakları saklıdır.</p>
   </footer>
+
+  <script>
+    let cart = [];
+
+    function addToCart(productName, price) {
+      cart.push({ name: productName, price: price });
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById("cartItems");
+      const totalPrice = document.getElementById("totalPrice");
+
+      cartItems.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = "<p>Sepetiniz boş.</p>";
+        totalPrice.innerText = "Toplam: 0 TL";
+        return;
+      }
+
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        total += item.price;
+
+        cartItems.innerHTML += `
+          <div class="cart-item">
+            <span>${item.name} - ${item.price} TL</span>
+            <button onclick="removeFromCart(${index})">Sil</button>
+          </div>
+        `;
+      });
+
+      totalPrice.innerText = "Toplam: " + total + " TL";
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function buyNow() {
+      if (cart.length === 0) {
+        alert("Sepetiniz boş!");
+        return;
+      }
+
+      let message = "Merhaba, KatmanLab üzerinden sipariş vermek istiyorum:%0A%0A";
+      let total = 0;
+
+      cart.forEach((item) => {
+        message += "- " + item.name + " | " + item.price + " TL%0A";
+        total += item.price;
+      });
+
+      message += "%0AToplam: " + total + " TL";
+
+      const phoneNumber = "905412345988";
+      const whatsappLink = "https://wa.me/" + phoneNumber + "?text=" + message;
+
+      window.open(whatsappLink, "_blank");
+    }
+  </script>
 
 </body>
 </html>
